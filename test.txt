@@ -1,0 +1,145 @@
+map = [['room00', 'wall' ,  'wall'  ],
+	   ['room10', 'room11', 'wall'  ],	# the game map
+	   ['wall',   'room21', 'room22']]
+#print map
+
+inventory = { 'money' : 500,       #Initialises the players inventory as a dictionary
+			  'watch' : 1,
+			  'painkillers' : 6
+			}
+			
+def move(x, y):
+	if map[x][y] == 'room00':      # a function that 'moves' the player into the
+		room00.enter()             # room corresponding to the player_x and player_y
+	if map[x][y] == 'room10':      # coordinates
+		room10.enter()
+	if map[x][y] == 'room11':
+		room11.enter()
+	if map[x][y] == 'room21':
+		room21.enter()
+	if map[x][y] == 'room22':
+		room22.enter()
+	if map[x][y] == 'wall':
+		wall.enter()
+
+class Room(object):
+	def __init__(self):
+		self.room_entered = False           # contains features that all rooms should have,
+	def enter(self):                        # such as 'activating' the events when you enter a room
+		if self.room_entered == False:      # as well as different events for the first and following
+			self.first_entry()              # times you enter a room
+			self.room_entered = True 		# All Rooms inherit from this class
+		elif self.room_entered == True:
+			self.second_entry()
+		else:
+			print "Ya done fucked up"		
+class Room00(Room):
+	def first_entry(self):
+		print "enter room 00 1st time"
+	def second_entry(self):
+		print "enter room 00 2nd time"
+		
+class Room10(Room):
+	def first_entry(self):
+		print "enter room 10 1st time"
+	def second_entry(self):
+		print "enter room 10 2nd time"
+		
+class Room11(Room):
+	def first_entry(self):
+		print "enter room 11 1st time"
+	def second_entry(self):
+		print "enter room 11 2nd time"
+		
+class Room21(Room):
+	def first_entry(self):
+		print "enter room 21 1st time"
+	def second_entry(self):
+		print "enter room 21 2nd time"
+		
+class Room22(Room):
+	def first_entry(self):
+		print "enter room 22 1st time"
+	def second_entry(self):
+		print "enter room 22 2nd time"
+		
+class Wall(object):
+	def enter(self):
+		print "You are stuck inside a wall. Someone should fix that"
+	
+room00 = Room00()            # the rooms are instances of classes, incase I want to repeatedly use
+room10 = Room10()            # the same room, although I haven't just yet
+room11 = Room11()
+room21 = Room21()
+room22 = Room22()
+wall   = Wall()
+
+
+command = False # I had to set it to something
+
+player_x = 0    #Initialises the players starting coordinates
+player_y = 0
+health = 100	#Initialises the players health points
+
+# After this, all of the 'set up' of creating the map and rooms (including their events) has been finished
+
+room00.enter()                       #starts the events in room00, otherwise it justs prompt to move out of room00 without its events happening
+while command != 'quit':                                               #this bit starts the game, all of the options the player can use
+	command = raw_input("Enter a command >>> ")					       #such as moving, accessing inventory or health, are tracked here
+																	   #(show map?)
+	if command == 'move':
+		print "\n"
+		direction = raw_input("Which direction? >>> ")
+		if direction == "north" and player_x > 0:
+			try:
+				player_x -= 1
+				print "\n attempting move to %s \n" % map[player_x][player_y]
+				move(player_x, player_y)
+			except IndexError:
+				player_x += 1
+				print "\n You tried to move somewhere that does not exist! \n"
+		elif direction == "south":
+			try:
+				player_x += 1
+				print "\n attempting move to %s \n" % map[player_x][player_y]	# Movement stuff, it should be self explanatory
+				move(player_x, player_y)										# (it calls the movement function defined above,
+			except IndexError:													# and takes care of instances where the player
+				player_x -= 1													# tries to move outside of the map		
+				print "\n You tried to move somewhere that does not exist! \n "
+		elif direction == "west" and player_y > 0:
+			try:
+				player_y -= 1
+				print "\n attempting move to %s \n" % map[player_x][player_y]	
+				move(player_x, player_y)
+			except IndexError:
+				player_y += 1
+				print "\n You tried to move somewhere that does not exist! \n"
+		elif direction == "east":
+			try:
+				player_y += 1
+				print "\n attempting move to %s \n" % map[player_x][player_y]
+				move(player_x, player_y)
+			except IndexError:
+				player_y -= 1
+				print "\n You tried to move somewhere that does not exist! \n"
+		elif 'north' in direction or 'west' in direction:												# A problem occurs if you try to move west when the x-coordinate is 0
+			print "\n You tried to move somewhere that does not exist! \n"								# because the x-coordinate would be -1, which actually places you at the last
+																										# coordinate, instead of throwing an Index Error. The same thing for north too.
+		else:																							# so this last elif catches that and displays the correct error message
+			print "\n Tsk. You made a spelling mistake. Enter exactly north, west, east or south next time. \n"
+	elif command == 'inventory':
+		print "\n"
+		for item in inventory:
+			print "    ", item, inventory[item]
+		print "\n"
+	
+	elif command == 'help':
+		print "Help stuff should go here"
+	
+	elif command == 'health':
+		print "\n you have %d health points, if it reaches 0 you die! \n" % health
+	
+	elif command == 'map':
+		print "somehow this should display a map with your location. it obviously isnt working yet though."
+	else:
+		print "\n Invalid Command \n"
